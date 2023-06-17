@@ -1,25 +1,53 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
-function App() {
+function TodoList() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [editIndex, setEditIndex] = useState(null);
+
+  const handleAddTodo = () => {
+    if (inputValue.trim()) {
+      if (editIndex !== null) {
+        setTodos(todos.map((todo, i) => (i === editIndex ? inputValue : todo)));
+        setEditIndex(null);
+      } else {
+        setTodos([...todos, inputValue]);
+      }
+      setInputValue('');
+    }
+  };
+
+  const handleRemoveTodo = (index) => {
+    setTodos(todos.filter((_, i) => i !== index));
+  };
+
+  const handleEditTodo = (index) => {
+    setInputValue(todos[index]);
+    setEditIndex(index);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="todo-list">
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button onClick={handleAddTodo}>
+        {editIndex !== null ? 'Save' : 'Add'}
+      </button>
+      <ul>
+        {todos.map((todo, index) => (
+          <li className="todo" key={index}>
+            {todo }{' '}
+            <button onClick={() => handleEditTodo(index)}>Edit</button>{' '}
+            <button onClick={() => handleRemoveTodo(index)}>Remove</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+export default TodoList;
